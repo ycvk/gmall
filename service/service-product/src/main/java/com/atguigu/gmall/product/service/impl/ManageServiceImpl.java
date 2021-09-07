@@ -66,6 +66,5 @@ public class ManageServiceImpl implements ManageService {
     @Override
     public List<BaseAttrInfo> getAttrInfoList(Long category1Id, Long category2Id, Long category3Id) {
         return baseAttrInfoMapper.selectAttrInfoList(category1Id, category2Id, category3Id);
-
     }
 }
