@@ -1,0 +1,41 @@
+package com.atguigu.gmall.product.service;
+
+import com.atguigu.gmall.model.product.BaseCategory1;
+import com.atguigu.gmall.model.product.BaseCategory2;
+import com.atguigu.gmall.model.product.BaseCategory3;
+
+import java.util.List;
+
+/**
+ * <p>Title: </p>
+ *
+ * <p>Description: </p>
+ *
+ * @author VERO
+ * @version 1.0
+ * @date 2021/9/7/20:01
+ */
+public interface ManageService {
+    /**
+     * 获取所有一级分类数据
+     *
+     * @return
+     */
+    List<BaseCategory1> getCategory1();
+
+    /**
+     * 通过一级分类Id获取所有二级分类数据
+     *
+     * @param category1Id
+     * @return
+     */
+    List<BaseCategory2> getCategory2(Long category1Id);
+
+    /**
+     * 通过二级分类Id获取所有三级分类数据
+     *
+     * @param category2Id
+     * @return
+     */
+    List<BaseCategory3> getCategory3(Long category2Id);
+}
