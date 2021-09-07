@@ -1,6 +1,7 @@
 package com.atguigu.gmall.product.controller;
 
 import com.atguigu.gmall.common.result.Result;
+import com.atguigu.gmall.model.product.BaseAttrInfo;
 import com.atguigu.gmall.model.product.BaseCategory1;
 import com.atguigu.gmall.model.product.BaseCategory2;
 import com.atguigu.gmall.model.product.BaseCategory3;
@@ -56,5 +57,14 @@ public class BaseManageController {
     public Result getCategory3(@PathVariable Long category2Id) {
         List<BaseCategory3> baseCategory3List = manageService.getCategory3(category2Id);
         return Result.ok(baseCategory3List);
+    }
+
+    @ApiOperation("根据分类Id 获取平台属性集合")
+    @GetMapping("attrInfoList/{category1Id}/{category2Id}/{category3Id}")
+    public Result getAttrInfoList(@PathVariable Long category1Id,
+                                  @PathVariable Long category2Id,
+                                  @PathVariable Long category3Id) {
+        List<BaseAttrInfo> baseAttrInfoList = manageService.getAttrInfoList(category1Id, category2Id, category3Id);
+        return Result.ok(baseAttrInfoList);
     }
 }
