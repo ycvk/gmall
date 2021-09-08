@@ -69,8 +69,18 @@ public class ManageServiceImpl implements ManageService {
     @Override
     @Transactional(rollbackFor = Exception.class) //有异常直接回滚
     public void saveAttrInfo(BaseAttrInfo baseAttrInfo) {
-        //插入数据
-        baseAttrInfoMapper.insert(baseAttrInfo);
+        //如果id为空，就是新增，否则是修改
+        if (baseAttrInfo.getId() == null) {
+            //插入数据
+            baseAttrInfoMapper.insert(baseAttrInfo);
+        } else {
+            //修改
+            baseAttrInfoMapper.updateById(baseAttrInfo);
+            //修改-->先删除value再直接新增
+            baseAttrValueMapper.delete(new QueryWrapper<BaseAttrValue>()
+                    .eq("attr_id", baseAttrInfo.getId()));
+        }
+
         List<BaseAttrValue> attrValueList = baseAttrInfo.getAttrValueList();
         //遍历baseAttrInfo中的baseAttrValue并插入数据
         attrValueList.forEach(baseAttrValue -> {

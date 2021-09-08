@@ -62,7 +62,7 @@ public class BaseManageController {
         return Result.ok(baseAttrInfoList);
     }
 
-    @ApiOperation("保存平台属性")
+    @ApiOperation("新增或修改平台属性")
     @PostMapping("saveAttrInfo")
     public Result saveAttrInfo(@RequestBody BaseAttrInfo baseAttrInfo) {
         manageService.saveAttrInfo(baseAttrInfo);
