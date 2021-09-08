@@ -79,4 +79,10 @@ public class ManageServiceImpl implements ManageService {
             baseAttrValueMapper.insert(baseAttrValue);
         });
     }
+
+    @Override
+    public List<BaseAttrValue> getAttrValueList(Long attrId) {
+        return baseAttrValueMapper.selectList(new QueryWrapper<BaseAttrValue>()
+                .eq("attr_id", attrId));
+    }
 }
