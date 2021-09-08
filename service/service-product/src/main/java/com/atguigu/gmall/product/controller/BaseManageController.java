@@ -9,10 +9,7 @@ import com.atguigu.gmall.product.service.ManageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -67,4 +64,12 @@ public class BaseManageController {
         List<BaseAttrInfo> baseAttrInfoList = manageService.getAttrInfoList(category1Id, category2Id, category3Id);
         return Result.ok(baseAttrInfoList);
     }
+
+    @ApiOperation("保存平台属性")
+    @PostMapping("saveAttrInfo")
+    public Result saveAttrInfo(@RequestBody BaseAttrInfo baseAttrInfo) {
+        manageService.saveAttrInfo(baseAttrInfo);
+        return Result.ok();
+    }
+
 }

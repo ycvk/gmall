@@ -1,14 +1,12 @@
 package com.atguigu.gmall.product.service.impl;
 
-import com.atguigu.gmall.model.product.BaseAttrInfo;
-import com.atguigu.gmall.model.product.BaseCategory1;
-import com.atguigu.gmall.model.product.BaseCategory2;
-import com.atguigu.gmall.model.product.BaseCategory3;
+import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.product.mapper.*;
 import com.atguigu.gmall.product.service.ManageService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -66,5 +64,19 @@ public class ManageServiceImpl implements ManageService {
     @Override
     public List<BaseAttrInfo> getAttrInfoList(Long category1Id, Long category2Id, Long category3Id) {
         return baseAttrInfoMapper.selectAttrInfoList(category1Id, category2Id, category3Id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class) //有异常直接回滚
+    public void saveAttrInfo(BaseAttrInfo baseAttrInfo) {
+        //插入数据
+        baseAttrInfoMapper.insert(baseAttrInfo);
+        List<BaseAttrValue> attrValueList = baseAttrInfo.getAttrValueList();
+        //遍历baseAttrInfo中的baseAttrValue并插入数据
+        attrValueList.forEach(baseAttrValue -> {
+            //attId传递的时候是null
+            baseAttrValue.setAttrId(baseAttrInfo.getId());
+            baseAttrValueMapper.insert(baseAttrValue);
+        });
     }
 }
