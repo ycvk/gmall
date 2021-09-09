@@ -4,6 +4,7 @@ import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.product.mapper.*;
 import com.atguigu.gmall.product.service.ManageService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,9 @@ public class ManageServiceImpl implements ManageService {
 
     @Autowired
     private BaseAttrValueMapper baseAttrValueMapper;
+
+    @Autowired
+    private SpuInfoMapper spuInfoMapper;
 
     /**
      * 获取所有一级分类数据
@@ -104,5 +108,12 @@ public class ManageServiceImpl implements ManageService {
             baseAttrInfo.setAttrValueList(getAttrValueList(attrId));
         }
         return baseAttrInfo;
+    }
+
+    @Override
+    public Page getSpuInfoPage(Page spuPage, SpuInfo spuInfo) {
+        return spuInfoMapper.selectPage(spuPage, new QueryWrapper<SpuInfo>()
+                .eq("category3_id", spuInfo.getCategory3Id())
+                .orderByDesc("id"));
     }
 }
