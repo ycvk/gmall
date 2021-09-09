@@ -62,4 +62,11 @@ public interface ManageService {
      * @return
      */
     List<BaseAttrValue> getAttrValueList(Long attrId);
+
+    /**
+     * 通过attrId获取AttrInfo属性
+     * @param attrId
+     * @return
+     */
+    BaseAttrInfo getBaseAttrInfo(Long attrId);
 }

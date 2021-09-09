@@ -1,7 +1,10 @@
 package com.atguigu.gmall.product.controller;
 
 import com.atguigu.gmall.common.result.Result;
-import com.atguigu.gmall.model.product.*;
+import com.atguigu.gmall.model.product.BaseAttrInfo;
+import com.atguigu.gmall.model.product.BaseCategory1;
+import com.atguigu.gmall.model.product.BaseCategory2;
+import com.atguigu.gmall.model.product.BaseCategory3;
 import com.atguigu.gmall.product.service.ManageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -73,8 +76,10 @@ public class BaseManageController {
     @ApiOperation("根据平台属性Id 获取到平台属性值集合")
     @GetMapping("getAttrValueList/{attrId}")
     public Result getAttrValueList(@PathVariable Long attrId) {
-        List<BaseAttrValue> baseAttrValueList = manageService.getAttrValueList(attrId);
-        return Result.ok(baseAttrValueList);
+        //List<BaseAttrValue> baseAttrValueList = manageService.getAttrValueList(attrId);优化为
+        BaseAttrInfo baseAttrInfo = manageService.getBaseAttrInfo(attrId);
+
+        return Result.ok(baseAttrInfo.getAttrValueList());
     }
 
 }

@@ -4,3 +4,10 @@
 /model/target/
 *.cmd;*.gitignore;*.hprof;*.iml;*.mvn;*.pyc;*.pyo;*.rbc;*.yarb;*~;.DS_Store;.git;.hg;.idea;.svn;CVS;__pycache__;_svn;mvnw;target;vssver.scc;vssver2.scc;
 /.idea/
+.class
+target/
+*.iml
+.idea/
+rebel.xml
+.rebel.xml.bak
+out/artifacts/

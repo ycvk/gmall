@@ -95,4 +95,14 @@ public class ManageServiceImpl implements ManageService {
         return baseAttrValueMapper.selectList(new QueryWrapper<BaseAttrValue>()
                 .eq("attr_id", attrId));
     }
+
+    @Override
+    public BaseAttrInfo getBaseAttrInfo(Long attrId) {
+        BaseAttrInfo baseAttrInfo = baseAttrInfoMapper.selectById(attrId);
+        //如果有数据，就给value赋值
+        if (baseAttrInfo != null) {
+            baseAttrInfo.setAttrValueList(getAttrValueList(attrId));
+        }
+        return baseAttrInfo;
+    }
 }
