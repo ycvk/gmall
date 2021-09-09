@@ -2,6 +2,7 @@ package com.atguigu.gmall.product.service;
 
 import com.atguigu.gmall.model.product.BaseTrademark;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>Title: </p>
@@ -12,7 +13,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
  * @version 1.0
  * @date 2021/9/9/22:31
  */
-public interface BaseTrademarkService {
+public interface BaseTrademarkService extends IService<BaseTrademark>  {
     /**
      * 获取品牌图标分页列表
      *
