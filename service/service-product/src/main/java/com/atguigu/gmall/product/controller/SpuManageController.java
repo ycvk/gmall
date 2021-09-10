@@ -7,10 +7,7 @@ import com.atguigu.gmall.product.service.ManageService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,6 +38,14 @@ public class SpuManageController {
     public Result getBaseSaleAttrList() {
         List<BaseSaleAttr> baseSaleAttrList = manageService.getBaseSaleAttrList();
         return Result.ok(baseSaleAttrList);
+    }
+
+    @ApiOperation("保存SPU数据")
+    @PostMapping("saveSpuInfo")
+    public Result saveSpuInfo(@RequestBody SpuInfo spuInfo) {
+
+        manageService.saveSpuInfo(spuInfo);
+        return Result.ok();
     }
 }
 
