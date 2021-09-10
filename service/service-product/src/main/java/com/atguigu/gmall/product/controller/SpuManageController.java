@@ -1,6 +1,7 @@
 package com.atguigu.gmall.product.controller;
 
 import com.atguigu.gmall.common.result.Result;
+import com.atguigu.gmall.model.product.BaseSaleAttr;
 import com.atguigu.gmall.model.product.SpuInfo;
 import com.atguigu.gmall.product.service.ManageService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author VERO
@@ -31,6 +34,13 @@ public class SpuManageController {
 
         Page spuInfoPage = manageService.getSpuInfoPage(spuPage, spuInfo);
         return Result.ok(spuInfoPage);
+    }
+
+    @ApiOperation("获取销售属性数据")
+    @GetMapping("baseSaleAttrList")
+    public Result getBaseSaleAttrList() {
+        List<BaseSaleAttr> baseSaleAttrList = manageService.getBaseSaleAttrList();
+        return Result.ok(baseSaleAttrList);
     }
 }
 

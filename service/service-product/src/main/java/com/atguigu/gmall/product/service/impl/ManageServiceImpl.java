@@ -42,6 +42,9 @@ public class ManageServiceImpl implements ManageService {
     @Autowired
     private SpuInfoMapper spuInfoMapper;
 
+    @Autowired
+    private BaseSaleAttrMapper baseSaleAttrMapper;
+
     /**
      * 获取所有一级分类数据
      */
@@ -115,5 +118,10 @@ public class ManageServiceImpl implements ManageService {
         return spuInfoMapper.selectPage(spuPage, new QueryWrapper<SpuInfo>()
                 .eq("category3_id", spuInfo.getCategory3Id())
                 .orderByDesc("id"));
+    }
+
+    @Override
+    public List<BaseSaleAttr> getBaseSaleAttrList() {
+        return baseSaleAttrMapper.selectList(null);
     }
 }

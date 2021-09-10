@@ -80,4 +80,11 @@ public interface ManageService {
      * @return
      */
     Page getSpuInfoPage(Page spuPage, SpuInfo spuInfo);
+
+    /**
+     * 获取所有销售属性数据
+     *
+     * @return
+     */
+    List<BaseSaleAttr> getBaseSaleAttrList();
 }
