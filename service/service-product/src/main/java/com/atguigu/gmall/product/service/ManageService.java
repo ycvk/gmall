@@ -110,4 +110,19 @@ public interface ManageService {
      * @return
      */
     List<SpuSaleAttr> getSpuSaleAttrList(Long spuId);
+
+    /**
+     * 保存SkuInfo
+     *
+     * @param skuInfo
+     */
+    void saveSkuInfo(SkuInfo skuInfo);
+
+    /**
+     * sku分页列表
+     *
+     * @param skuInfoPage
+     * @return
+     */
+    Page getList(Page<SkuInfo> skuInfoPage);
 }

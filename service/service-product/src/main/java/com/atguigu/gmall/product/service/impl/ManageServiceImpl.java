@@ -58,6 +58,18 @@ public class ManageServiceImpl implements ManageService {
     @Autowired
     private SpuPosterMapper spuPosterMapper;
 
+    @Autowired
+    private SkuInfoMapper skuInfoMapper;
+
+    @Autowired
+    private SkuImageMapper skuImageMapper;
+
+    @Autowired
+    private SkuAttrValueMapper skuAttrValueMapper;
+
+    @Autowired
+    private SkuSaleAttrValueMapper skuSaleAttrValueMapper;
+
     /**
      * 获取所有一级分类数据
      */
@@ -190,5 +202,51 @@ public class ManageServiceImpl implements ManageService {
     @Override
     public List<SpuSaleAttr> getSpuSaleAttrList(Long spuId) {
         return spuSaleAttrMapper.selectSpuSaleAttrList(spuId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveSkuInfo(SkuInfo skuInfo) {
+        /*
+        skuInfo 库存单元表 --- spuInfo！
+        skuImage 库存单元图片表 --- spuImage!
+        skuSaleAttrValue sku销售属性值表{sku与销售属性值的中间表} --- skuInfo ，spuSaleAttrValue
+        skuAttrValue sku与平台属性值的中间表 --- skuInfo ，baseAttrValue
+        */
+        skuInfoMapper.insert(skuInfo);
+        //获取image集合
+        List<SkuImage> skuImageList = skuInfo.getSkuImageList();
+        if (!CollectionUtils.isEmpty(skuImageList)) {
+            skuImageList.forEach(skuImage -> {
+                skuImage.setSkuId(skuInfo.getId());
+                skuImageMapper.insert(skuImage);
+            });
+        }
+        //sku  attrValue
+        List<SkuAttrValue> skuAttrValueList = skuInfo.getSkuAttrValueList();
+        if (!CollectionUtils.isEmpty(skuAttrValueList)) {
+            skuAttrValueList.forEach(skuAttrValue -> {
+                skuAttrValue.setSkuId(skuInfo.getId());
+
+                skuAttrValueMapper.insert(skuAttrValue);
+            });
+        }
+
+        //sku sale attrValue
+        List<SkuSaleAttrValue> skuSaleAttrValueList = skuInfo.getSkuSaleAttrValueList();
+        if (!CollectionUtils.isEmpty(skuSaleAttrValueList)) {
+            skuSaleAttrValueList.forEach(skuSaleAttrValue -> {
+                skuSaleAttrValue.setSkuId(skuInfo.getId());
+                skuSaleAttrValue.setSpuId(skuInfo.getSpuId());
+                skuSaleAttrValueMapper.insert(skuSaleAttrValue);
+            });
+        }
+    }
+
+    @Override
+    public Page getList(Page<SkuInfo> skuInfoPage) {
+        return skuInfoMapper.selectPage(skuInfoPage, new QueryWrapper<SkuInfo>()
+                .orderByDesc("id"));
+
     }
 }
