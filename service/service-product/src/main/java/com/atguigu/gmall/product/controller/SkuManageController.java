@@ -39,4 +39,20 @@ public class SkuManageController {
         Page page1 = manageService.getList(skuInfoPage);
         return Result.ok(page1);
     }
+
+    @ApiOperation("商品上架")
+    @GetMapping("onSale/{skuId}")
+    public Result onSale(@PathVariable Long skuId) {
+        manageService.onSale(skuId);
+        return Result.ok();
+    }
+
+    @ApiOperation("商品下架")
+    @GetMapping("cancelSale/{skuId}")
+    public Result cancelSale(@PathVariable Long skuId) {
+        manageService.cancelSale(skuId);
+        return Result.ok();
+    }
+
+
 }

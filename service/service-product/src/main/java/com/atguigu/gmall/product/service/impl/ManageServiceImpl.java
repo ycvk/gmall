@@ -249,4 +249,18 @@ public class ManageServiceImpl implements ManageService {
                 .orderByDesc("id"));
 
     }
+
+    @Override
+    public void onSale(Long skuId) {
+        SkuInfo skuInfo = new SkuInfo(skuId);
+        skuInfo.setIsSale(1);
+        skuInfoMapper.updateById(skuInfo);
+    }
+
+    @Override
+    public void cancelSale(Long skuId) {
+        SkuInfo skuInfo = new SkuInfo(skuId);
+        skuInfo.setIsSale(0);
+        skuInfoMapper.updateById(skuInfo);
+    }
 }
