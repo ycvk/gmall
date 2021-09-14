@@ -35,4 +35,21 @@
             <id property="id" column="attr_value_id"/>
         </collection>
     </resultMap>
+
+    <select id="selectBaseAttrInfoList" resultMap="BaseAttrInfo">
+        SELECT
+        bai.id,
+        bai.attr_name,
+        bai.category_id,
+        bai.category_level,
+        bav.id attr_value_id,
+        bav.value_name,
+        bav.attr_id
+        FROM
+        base_attr_info bai
+        INNER JOIN base_attr_value bav ON bai.id = bav.attr_id
+        INNER JOIN sku_attr_value sav ON sav.value_id = bav.id
+        WHERE
+        sav.sku_id = #{skuId}
+    </select>
 </mapper>

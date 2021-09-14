@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>Title: </p>
@@ -69,6 +72,9 @@ public class ManageServiceImpl implements ManageService {
 
     @Autowired
     private SkuSaleAttrValueMapper skuSaleAttrValueMapper;
+
+    @Autowired
+    private BaseCategoryViewMapper baseCategoryViewMapper;
 
     /**
      * 获取所有一级分类数据
@@ -262,5 +268,55 @@ public class ManageServiceImpl implements ManageService {
         SkuInfo skuInfo = new SkuInfo(skuId);
         skuInfo.setIsSale(0);
         skuInfoMapper.updateById(skuInfo);
+    }
+
+    @Override
+    public SkuInfo getSkuInfo(Long skuId) {
+        SkuInfo skuInfo = skuInfoMapper.selectById(skuId);
+        skuInfo.setSkuImageList(skuImageMapper
+                .selectList(new QueryWrapper<SkuImage>()
+                        .eq("sku_id", skuId)));
+        return skuInfo;
+    }
+
+    @Override
+    public BigDecimal getPrice(Long skuId) {
+        SkuInfo skuInfo = skuInfoMapper.selectOne(new QueryWrapper<SkuInfo>()
+                .eq("id", skuId)
+                .select("price"));
+        return skuInfo.getPrice();
+    }
+
+    @Override
+    public BaseCategoryView getCategoryViewByCategory3Id(Long category3Id) {
+        return baseCategoryViewMapper.selectById(category3Id);
+    }
+
+    @Override
+    public List<SpuSaleAttr> getSpuSaleAttrListById(Long skuId, Long spuId) {
+        return spuSaleAttrMapper.selectSpuSaleAttrListById(skuId, spuId);
+    }
+
+    @Override
+    public Map getSkuValueIdsMap(Long spuId) {
+        HashMap<Object, Object> hashMap = new HashMap<>();
+
+        List<Map> mapList = skuSaleAttrValueMapper.getSkuValueIdsMap(spuId);
+        if (!CollectionUtils.isEmpty(mapList)) {
+            mapList.forEach(map -> {
+                hashMap.put(map.get("value_ids"), map.get("sku_id"));
+            });
+        }
+        return hashMap;
+    }
+
+    @Override
+    public List<SpuPoster> getSpuPosterById(Long spuId) {
+        return spuPosterMapper.selectList(new QueryWrapper<SpuPoster>().eq("spu_id", spuId));
+    }
+
+    @Override
+    public List<BaseAttrInfo> getBaseAttrInfoList(Long skuId) {
+        return baseAttrInfoMapper.selectBaseAttrInfoList(skuId);
     }
 }
