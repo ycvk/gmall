@@ -7,6 +7,7 @@
 .class
 target/
 *.iml
+.png
 .idea/
 rebel.xml
 .rebel.xml.bak
