@@ -11,3 +11,5 @@ target/
 rebel.xml
 .rebel.xml.bak
 out/artifacts/
+/web/web-all/src/main/resources/static/
+/web/web-all/src/main/resources/templates/
