@@ -412,13 +412,23 @@ public class ManageServiceImpl implements ManageService {
 
     @Override
     public BigDecimal getPrice(Long skuId) {
-        SkuInfo skuInfo = skuInfoMapper.selectOne(new QueryWrapper<SkuInfo>()
-                .eq("id", skuId)
-                .select("price"));
-        if (skuInfo == null) {
-            return new BigDecimal(0);
+        RLock lock = redissonClient.getLock("priceLock");
+        lock.lock();
+        SkuInfo skuInfo = null;
+        BigDecimal price = new BigDecimal(0);
+        try {
+            skuInfo = skuInfoMapper.selectOne(new QueryWrapper<SkuInfo>()
+                    .eq("id", skuId)
+                    .select("price"));
+            if (skuInfo != null) {
+                price = skuInfo.getPrice();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
-        return skuInfo.getPrice();
+        return price;
     }
 
     @Override
