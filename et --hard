@@ -1,0 +1,46 @@
+[33m07e1d71[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31mgithub/master[m[33m)[m HEAD@{0}: rebase (finish): returning to refs/heads/master
+[33m07e1d71[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31mgithub/master[m[33m)[m HEAD@{1}: rebase (start): checkout 07e1d7157de1234b413b0aef8c65fb20a17212c0
+[33mc5b2d3a[m HEAD@{2}: commit: 自定义注解来使用AOP切面编程方式加分布式锁
+[33m07e1d71[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31mgithub/master[m[33m)[m HEAD@{3}: commit: 用redis+lua或redisson方式取缓存和数据
+[33mc5e2688[m HEAD@{4}: commit: 商品详情
+[33mc719689[m HEAD@{5}: commit: 屏蔽上传文件
+[33m068d96d[m HEAD@{6}: commit: web父工程
+[33m0f91dee[m HEAD@{7}: commit: 工具类
+[33mb8247ec[m HEAD@{8}: commit: 商品详情页
+[33m10ba910[m HEAD@{9}: commit: 商品上下架
+[33ma6e7c78[m HEAD@{10}: commit: sku分页列表
+[33m7074a8d[m HEAD@{11}: commit: 根据spuId查询销售属性
+[33m65694b0[m HEAD@{12}: reset: moving to 65694b08b5930b5e12efb59f262f28c67006f0d3
+[33m5160496[m HEAD@{13}: reset: moving to 51604960de5cdf6c313660e5e8e040e3a8d46c5c
+[33mb7903e8[m HEAD@{14}: reset: moving to b7903e85f466fc82c68a1a43444423402e667243
+[33mfe69b4f[m HEAD@{15}: reset: moving to fe69b4f7dc47dcd6e8b06ff3628f388f37da0baa
+[33mfe69b4f[m HEAD@{16}: reset: moving to fe69b4f7dc47dcd6e8b06ff3628f388f37da0baa
+[33m65694b0[m HEAD@{17}: commit: 保存spu总信息
+[33mfe69b4f[m HEAD@{18}: commit: minio上传文件
+[33mb7903e8[m HEAD@{19}: commit: 品牌关联
+[33m2bea718[m HEAD@{20}: commit: 根据category3Id获取品牌列表
+[33m5160496[m HEAD@{21}: commit: 品牌的CRUD
+[33mf344322[m HEAD@{22}: commit: 获取品牌图标分页列表
+[33mad5d3bc[m HEAD@{23}: commit: spu根据三级ID分页列表
+[33m0d1f547[m HEAD@{24}: commit: gateway解决跨域问题和添加nacos持久化
+[33mc3c5f75[m HEAD@{25}: commit: 新增或修改平台属性
+[33m8e54e3e[m HEAD@{26}: commit: 根据平台属性Id获取到平台属性值集合
+[33m44b1a3e[m HEAD@{27}: commit: 保存平台属性
+[33m0f5fe0c[m[33m ([m[1;32mdev[m[33m)[m HEAD@{28}: checkout: moving from dev to master
+[33m0f5fe0c[m[33m ([m[1;32mdev[m[33m)[m HEAD@{29}: merge github/master: Fast-forward
+[33me63b417[m[33m ([m[1;31mgithub/dev[m[33m)[m HEAD@{30}: checkout: moving from master to dev
+[33m0f5fe0c[m[33m ([m[1;32mdev[m[33m)[m HEAD@{31}: commit: 根据分类Id来获取平台属性数据
+[33m6835f17[m HEAD@{32}: commit: 根据分类Id来获取平台属性数据
+[33mf2e29b9[m HEAD@{33}: commit: 改为新版分页插件
+[33m2d313e0[m HEAD@{34}: commit: day02
+[33m3a3f724[m HEAD@{35}: rebase (finish): returning to refs/heads/master
+[33m3a3f724[m HEAD@{36}: rebase (start): checkout github/master
+[33me63b417[m[33m ([m[1;31mgithub/dev[m[33m)[m HEAD@{37}: merge dev: Fast-forward
+[33m0fa6ebb[m HEAD@{38}: checkout: moving from dev to master
+[33me63b417[m[33m ([m[1;31mgithub/dev[m[33m)[m HEAD@{39}: commit: git忽略文件
+[33m0fa6ebb[m HEAD@{40}: checkout: moving from master to dev
+[33m0fa6ebb[m HEAD@{41}: checkout: moving from dev to master
+[33m0fa6ebb[m HEAD@{42}: checkout: moving from master to dev
+[33m0fa6ebb[m HEAD@{43}: checkout: moving from master to master
+[33m0fa6ebb[m HEAD@{44}: branch: Reset to github/master
+[33m0fa6ebb[m HEAD@{45}: commit (initial): Initial commit
