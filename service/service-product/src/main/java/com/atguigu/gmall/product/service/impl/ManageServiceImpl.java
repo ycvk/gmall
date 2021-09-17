@@ -1,5 +1,6 @@
 package com.atguigu.gmall.product.service.impl;
 
+import com.atguigu.gmall.common.cache.GmallCache;
 import com.atguigu.gmall.common.constant.RedisConst;
 import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.product.mapper.*;
@@ -293,8 +294,10 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
+    @GmallCache(prefix = "sku:")
     public SkuInfo getSkuInfo(Long skuId) {
-        return getInfoViaRedisson(skuId);
+//        return getInfoViaRedisson(skuId);
+        return getSkuInfoFromDB(skuId);
     }
 
     //用redisson方式获取缓存和数据
@@ -419,16 +422,19 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
+    @GmallCache(prefix = "CategoryViewByCategory3Id")
     public BaseCategoryView getCategoryViewByCategory3Id(Long category3Id) {
         return baseCategoryViewMapper.selectById(category3Id);
     }
 
     @Override
+    @GmallCache(prefix = "SpuSaleAttrListById")
     public List<SpuSaleAttr> getSpuSaleAttrListById(Long skuId, Long spuId) {
         return spuSaleAttrMapper.selectSpuSaleAttrListById(skuId, spuId);
     }
 
     @Override
+    @GmallCache(prefix = "SkuValueIdsMap:")
     public Map getSkuValueIdsMap(Long spuId) {
         HashMap<Object, Object> hashMap = new HashMap<>();
 
@@ -442,11 +448,13 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
+    @GmallCache(prefix = "SpuPoster:")
     public List<SpuPoster> getSpuPosterById(Long spuId) {
         return spuPosterMapper.selectList(new QueryWrapper<SpuPoster>().eq("spu_id", spuId));
     }
 
     @Override
+    @GmallCache(prefix = "BaseAttrInfoList:")
     public List<BaseAttrInfo> getBaseAttrInfoList(Long skuId) {
         return baseAttrInfoMapper.selectBaseAttrInfoList(skuId);
     }
