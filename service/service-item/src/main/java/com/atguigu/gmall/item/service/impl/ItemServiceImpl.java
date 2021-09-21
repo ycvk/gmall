@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 /**
@@ -28,42 +30,72 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private ProductFeignClient productFeinClient;
 
+    @Autowired
+    private ThreadPoolExecutor threadPoolExecutor;
+
     @Override
     public Map<String, Object> getItem(Long skuId) {
-        //根据skuId获取sku信息
-        SkuInfo skuInfo = productFeinClient.getSkuInfo(skuId);
-        //根据skuid获取价格信息
-        BigDecimal skuPrice = productFeinClient.getSkuPrice(skuId);
-        //通过三级分类id查询分类信息
-        BaseCategoryView categoryView = productFeinClient.getCategoryView(skuInfo.getCategory3Id());
-        //通过skuId 集合来查询数据
-        List<BaseAttrInfo> attrList = productFeinClient.getAttrList(skuId);
-        //根据spuId 查询map 集合属性
-        Map skuValueIdsMap = productFeinClient.getSkuValueIdsMap(skuInfo.getSpuId());
-        String strJson = JSON.toJSONString(skuValueIdsMap);
-        //根据spuId 获取海报数据
-        List<SpuPoster> spuPosterBySpuId = productFeinClient.findSpuPosterBySpuId(skuInfo.getSpuId());
-        //根据spuId，skuId 查询销售属性集合
-        List<SpuSaleAttr> spuSaleAttrListById = productFeinClient.getSpuSaleAttrListById(skuId, skuInfo.getSpuId());
+        //声明集合对象
         HashMap<String, Object> hashMap = new HashMap<>();
+        //使用异步编排方式
+        CompletableFuture<SkuInfo> skuInfoCompletableFuture = CompletableFuture.supplyAsync(() -> {
+            //根据skuId获取sku信息
+            SkuInfo skuInfo = productFeinClient.getSkuInfo(skuId);
+            hashMap.put("skuInfo", skuInfo);
+            return skuInfo;
+        }, threadPoolExecutor);
 
+        //根据skuid获取价格信息
+        CompletableFuture<Void> priceCompletableFuture = CompletableFuture.runAsync(() -> {
+            BigDecimal skuPrice = productFeinClient.getSkuPrice(skuId);
+            hashMap.put("price", skuPrice);
+        }, threadPoolExecutor);
 
-        hashMap.put("skuInfo", skuInfo);
-        hashMap.put("categoryView", categoryView);
-        hashMap.put("spuSaleAttrList", spuSaleAttrListById);
-        hashMap.put("valuesSkuJson", strJson);
-        hashMap.put("price", skuPrice);
-        hashMap.put("spuPosterList", spuPosterBySpuId);
+        //通过三级分类id查询分类信息
+        CompletableFuture<Void> categoryViewCompletableFuture = skuInfoCompletableFuture.thenAcceptAsync(skuInfo -> {
+            BaseCategoryView categoryView = productFeinClient.getCategoryView(skuInfo.getCategory3Id());
+            hashMap.put("categoryView", categoryView);
+        }, threadPoolExecutor);
 
-        List<Map<String, String>> skuAttrList = attrList.stream().map((baseAttrInfo) -> {
-            Map<String, String> attrMap = new HashMap<>();
-            attrMap.put("attrName", baseAttrInfo.getAttrName());
-            attrMap.put("attrValue", baseAttrInfo.getAttrValueList().get(0).getValueName());
-            return attrMap;
-        }).collect(Collectors.toList());
+        //通过skuId 集合来查询数据
+        CompletableFuture<Void> attrCompletableFuture = CompletableFuture.runAsync(() -> {
+            List<BaseAttrInfo> attrList = productFeinClient.getAttrList(skuId);
+            List<Map<String, String>> skuAttrList = attrList.stream().map((baseAttrInfo) -> {
+                Map<String, String> attrMap = new HashMap<>();
+                attrMap.put("attrName", baseAttrInfo.getAttrName());
+                attrMap.put("attrValue", baseAttrInfo.getAttrValueList().get(0).getValueName());
+                return attrMap;
+            }).collect(Collectors.toList());
+            hashMap.put("skuAttrList", skuAttrList);
+        }, threadPoolExecutor);
 
-        hashMap.put("skuAttrList", skuAttrList);
+        //根据spuId 查询map 集合属性
+        CompletableFuture<Void> valueJsonCompletableFuture = skuInfoCompletableFuture.thenAcceptAsync(skuInfo -> {
+            Map skuValueIdsMap = productFeinClient.getSkuValueIdsMap(skuInfo.getSpuId());
+            String strJson = JSON.toJSONString(skuValueIdsMap);
+            hashMap.put("valuesSkuJson", strJson);
+        }, threadPoolExecutor);
 
+        //根据spuId 获取海报数据
+        CompletableFuture<Void> spuPosterListCompletableFuture = skuInfoCompletableFuture.thenAcceptAsync(skuInfo -> {
+            List<SpuPoster> spuPosterBySpuId = productFeinClient.findSpuPosterBySpuId(skuInfo.getSpuId());
+            hashMap.put("spuPosterList", spuPosterBySpuId);
+        }, threadPoolExecutor);
+
+        //根据spuId，skuId 查询销售属性集合
+        CompletableFuture<Void> spuSaleAttrListCompletableFuture = skuInfoCompletableFuture.thenAcceptAsync(skuInfo -> {
+            List<SpuSaleAttr> spuSaleAttrListById = productFeinClient.getSpuSaleAttrListById(skuId, skuInfo.getSpuId());
+            hashMap.put("spuSaleAttrList", spuSaleAttrListById);
+        }, threadPoolExecutor);
+
+        //返回数据
+        CompletableFuture.allOf(skuInfoCompletableFuture,
+                priceCompletableFuture,
+                categoryViewCompletableFuture,
+                attrCompletableFuture,
+                valueJsonCompletableFuture,
+                spuPosterListCompletableFuture,
+                spuSaleAttrListCompletableFuture).join();
         return hashMap;
     }
 }
