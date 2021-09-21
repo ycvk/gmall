@@ -1,5 +1,6 @@
 package com.atguigu.gmall.product.api;
 
+import com.alibaba.fastjson.JSONObject;
 import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.product.service.ManageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,5 +105,11 @@ public class ProductApiController {
     @GetMapping("inner/getAttrList/{skuId}")
     public List<BaseAttrInfo> getAttrList(@PathVariable Long skuId) {
         return manageService.getBaseAttrInfoList(skuId);
+    }
+
+
+    @GetMapping("getBaseCategoryList")
+    public List<JSONObject> getBaseCategoryList() {
+        return manageService.getBaseCategoryList();
     }
 }

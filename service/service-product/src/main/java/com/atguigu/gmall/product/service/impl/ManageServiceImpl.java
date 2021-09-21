@@ -1,5 +1,6 @@
 package com.atguigu.gmall.product.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.atguigu.gmall.common.cache.GmallCache;
 import com.atguigu.gmall.common.constant.RedisConst;
 import com.atguigu.gmall.model.product.*;
@@ -19,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * <p>Title: </p>
@@ -467,5 +469,67 @@ public class ManageServiceImpl implements ManageService {
     @GmallCache(prefix = "BaseAttrInfoList:")
     public List<BaseAttrInfo> getBaseAttrInfoList(Long skuId) {
         return baseAttrInfoMapper.selectBaseAttrInfoList(skuId);
+    }
+
+    @Override
+    public List<JSONObject> getBaseCategoryList() {
+
+        List<JSONObject> list = new ArrayList<>();
+        List<BaseCategoryView> baseCategoryViewList = baseCategoryViewMapper.selectList(null);
+        //按照category1Id进行分组
+        Map<Long, List<BaseCategoryView>> baseCategory1Map =
+                baseCategoryViewList.stream().collect(Collectors.groupingBy(BaseCategoryView::getCategory1Id));
+        int index = 1;
+        //遍历
+        Iterator<Map.Entry<Long, List<BaseCategoryView>>> iterator = baseCategory1Map.entrySet().iterator();
+        while (iterator.hasNext()) {
+            //新建一个接收对象
+            JSONObject category1 = new JSONObject();
+            Map.Entry<Long, List<BaseCategoryView>> next = iterator.next();
+            Long category1Id = next.getKey();
+            List<BaseCategoryView> baseCategoryViewList1 = next.getValue();
+            //一级分类Id
+            category1.put("categoryId", category1Id);
+            //一级分类名称
+            category1.put("categoryName", baseCategoryViewList1.get(0).getCategory1Name());
+            //一级分类的第几项
+            category1.put("index", index);
+            index++;
+            //获取一级分类下的二级分类
+            Map<Long, List<BaseCategoryView>> baseCategory2Map = baseCategoryViewList1.stream().collect(Collectors.groupingBy(BaseCategoryView::getCategory2Id));
+            Iterator<Map.Entry<Long, List<BaseCategoryView>>> iterator1 = baseCategory2Map.entrySet().iterator();
+            //声明一个存储2级JSONObject分类的list
+            ArrayList<JSONObject> category2List = new ArrayList<>();
+            while (iterator1.hasNext()) {
+                Map.Entry<Long, List<BaseCategoryView>> next1 = iterator1.next();
+                Long category2Id = next1.getKey();
+                List<BaseCategoryView> baseCategoryViewList2 = next1.getValue();
+                JSONObject category2 = new JSONObject();
+                //2级分类Id
+                category2.put("categoryId", category2Id);
+                //2级分类名称
+                category2.put("categoryName", baseCategoryViewList2.get(0).getCategory2Name());
+
+                //获取三级分类数据
+                //创建一个list来存储3级分类数据
+                ArrayList<JSONObject> category3List = new ArrayList<>();
+                baseCategoryViewList2.stream().forEach(baseCategoryView -> {
+                    JSONObject category3 = new JSONObject();
+                    category3.put("categoryId", baseCategoryView.getCategory3Id());
+                    category3.put("categoryName", baseCategoryView.getCategory3Name());
+                    category3List.add(category3);
+                });
+                //把三级数据保存到二级的list中
+                category2.put("categoryChild", category3List);
+                category2List.add(category2);
+            }
+            //把2级数据保存到1级的list中
+            category1.put("categoryChild", category2List);
+
+            //把1级数据保存到list中
+            list.add(category1);
+        }
+
+        return list;
     }
 }
