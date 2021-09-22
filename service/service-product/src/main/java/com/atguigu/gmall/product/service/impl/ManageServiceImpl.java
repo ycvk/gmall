@@ -89,6 +89,9 @@ public class ManageServiceImpl implements ManageService {
     @Autowired
     private RedissonClient redissonClient;
 
+    @Autowired
+    private BaseTrademarkMapper baseTrademarkMapper;
+
     //从数据库获取skuinfo
     private SkuInfo getSkuInfoFromDB(Long skuId) {
         SkuInfo skuInfo = skuInfoMapper.selectById(skuId);
@@ -531,5 +534,10 @@ public class ManageServiceImpl implements ManageService {
         }
 
         return list;
+    }
+
+    @Override
+    public BaseTrademark getTrademarkByTmId(Long tmId) {
+        return baseTrademarkMapper.selectById(tmId);
     }
 }

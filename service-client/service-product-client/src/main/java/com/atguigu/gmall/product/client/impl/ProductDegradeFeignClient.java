@@ -59,4 +59,9 @@ public class ProductDegradeFeignClient implements ProductFeignClient {
     public List<JSONObject> getBaseCategoryList() {
         return null;
     }
+
+    @Override
+    public BaseTrademark getTrademark(Long tmId) {
+        return null;
+    }
 }
