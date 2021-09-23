@@ -10,10 +10,12 @@ import com.atguigu.gmall.model.product.BaseTrademark;
 import com.atguigu.gmall.model.product.SkuInfo;
 import com.atguigu.gmall.product.client.ProductFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
@@ -38,6 +40,9 @@ public class SearchServiceImpl implements SearchService {
 
     @Autowired
     private ThreadPoolExecutor threadPoolExecutor;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public void upperGoods(Long skuId) {
@@ -96,5 +101,19 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public void lowerGoods(Long skuId) {
         goodsRepository.deleteById(skuId);
+    }
+
+    @Override
+    public void incrHotScore(Long skuId) {
+
+        String key = "hotScore";
+        Double score = redisTemplate.opsForZSet().incrementScore(key, "skuId:" + skuId, 1);
+        //判断并重新赋值存入缓存
+        if (score % 10 == 0) {
+            Optional<Goods> goodsOptional = goodsRepository.findById(skuId);
+            Goods goods = goodsOptional.get();
+            goods.setHotScore(score.longValue());
+            goodsRepository.save(goods);
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.atguigu.gmall.item.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall.item.service.ItemService;
+import com.atguigu.gmall.list.client.ListFeignClient;
 import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.product.client.ProductFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     private ThreadPoolExecutor threadPoolExecutor;
+
+    @Autowired
+    private ListFeignClient listFeignClient;
 
     @Override
     public Map<String, Object> getItem(Long skuId) {
@@ -88,6 +92,11 @@ public class ItemServiceImpl implements ItemService {
             hashMap.put("spuSaleAttrList", spuSaleAttrListById);
         }, threadPoolExecutor);
 
+        //热度排名
+        CompletableFuture<Void> hotScoreCompletableFuture = CompletableFuture.runAsync(() -> {
+            listFeignClient.incrHotScore(skuId);
+        }, threadPoolExecutor);
+
         //返回数据
         CompletableFuture.allOf(skuInfoCompletableFuture,
                 priceCompletableFuture,
@@ -95,7 +104,8 @@ public class ItemServiceImpl implements ItemService {
                 attrCompletableFuture,
                 valueJsonCompletableFuture,
                 spuPosterListCompletableFuture,
-                spuSaleAttrListCompletableFuture).join();
+                spuSaleAttrListCompletableFuture,
+                hotScoreCompletableFuture).join();
         return hashMap;
     }
 }
