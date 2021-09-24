@@ -1,5 +1,8 @@
 package com.atguigu.gmall.list.service;
 
+import com.atguigu.gmall.model.list.SearchParam;
+import com.atguigu.gmall.model.list.SearchResponseVo;
+
 /**
  * <p>Title: </p>
  *
@@ -31,5 +34,12 @@ public interface SearchService {
      */
     void incrHotScore(Long skuId);
 
+    /**
+     * 检索方法
+     *
+     * @param searchParam
+     * @return
+     */
+    SearchResponseVo search(SearchParam searchParam);
 
 }

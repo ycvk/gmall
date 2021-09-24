@@ -3,12 +3,11 @@ package com.atguigu.gmall.list.controller;
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.list.service.SearchService;
 import com.atguigu.gmall.model.list.Goods;
+import com.atguigu.gmall.model.list.SearchParam;
+import com.atguigu.gmall.model.list.SearchResponseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>Title: </p>
@@ -74,4 +73,15 @@ public class ListApiController {
         return Result.ok();
     }
 
+    /**
+     * 搜索商品
+     *
+     * @param searchParam
+     * @return
+     */
+    @PostMapping
+    public Result searchData(@RequestBody SearchParam searchParam) {
+        SearchResponseVo search = searchService.search(searchParam);
+        return Result.ok(search);
+    }
 }
