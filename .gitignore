@@ -8,6 +8,7 @@
 target/
 *.iml
 .png
+*.log
 .idea/
 rebel.xml
 .rebel.xml.bak
