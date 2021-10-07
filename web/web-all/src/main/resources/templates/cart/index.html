@@ -15,7 +15,7 @@
     <div th:include="common/head :: head"></div>
 </head>
 
-<body onunload="javascript:hm.postData();">
+<body>
 <!--head-->
 <!-- 头部栏位 -->
 <!--页面顶部-->
@@ -35,104 +35,31 @@
                 <div class="yui3-u-1-8">小计（元）</div>
                 <div class="yui3-u-1-8">操作</div>
             </div>
-            <div class="cart-item-list" v-for="cartInfoVo in data" :key="cartInfoVo.id">
-                <div style="padding: 2px; margin-bottom: -10px;color: red;margin-top: 10px;">{{cartInfoVo.activityContent}}</div>
+            <div class="cart-item-list" >
                 <div class="cart-body">
-                    <div class="cart-list hm-display-statistics" v-for="(item,index) in cartInfoVo.cartInfoList" :key="item.id" :hm-display="'{\'displayType\':\'query\', \'item_type\': \'skuId\', \'item\': '+item.skuId+', \'order\': '+index+'}'">
+                    <div class="cart-list" v-for="item in data" :key="item.id">
                         <ul class="goods-list yui3-g">
                             <li class="yui3-u-1-24">
                                 <input type="checkbox" v-model="item.isChecked" @click="checkCart(item)" name="chk_list"/>
                             </li>
                             <li class="yui3-u-6-24">
                                 <div class="good-item">
-                                    <div class="item-img"><a :href="'http://item.gmall.com/'+item.skuId+'.html'"><img :src="item.imgUrl"/></a></div>
-                                    <div class="item-msg"><a :href="'http://item.gmall.com/'+item.skuId+'.html'">{{ item.skuName }}</a></div>
+                                    <div class="item-img"><img :src="item.imgUrl"/></div>
+                                    <div class="item-msg">{{ item.skuName }}</div>
                                 </div>
                             </li>
                             <li class="yui3-u-5-24">
                                 <div class="item-txt"></div>
                             </li>
+                            <li class="yui3-u-1-8"><span class="price">{{ item.skuPrice }}</span></li>
                             <li class="yui3-u-1-8">
-                                <span class="price">￥{{ item.skuPrice }}</span>
-
-                                <div v-if="cartInfoVo.activityRuleList !== null  && cartInfoVo.activityRuleList.length > 0">
-                                    <a class="sales-promotion" :id="'activity_a_'+item.skuId" href="#none" @click="activityShow(item.skuId)" style="color: #E2231A;">促销<b></b></a>
-                                    <div class="promotion-tips" :id="'activity_'+item.skuId" style="left: 675px; top:100px; display: none;">
-                                        <div class="promotion-tit" style="width: 43px;">促销<b></b></div>
-                                        <div class="promotion-cont">
-                                            <ul>
-                                                <!-- 满减 -->
-                                                <li v-for="(activityRule, indexj) in cartInfoVo.activityRuleList" :key="activityRule.id" v-if="activityRule.activityType == 'FULL_REDUCTION'"><input type="radio" :name="item.skuId" :value="indexj" v-model="activityRule.checked">满{{ activityRule.conditionAmount }}减{{ activityRule.benefitAmount }}元</li>
-                                                <!-- 满减 -->
-                                                <li v-for="(activityRule, indexj) in cartInfoVo.activityRuleList" :key="activityRule.id" v-if="activityRule.activityType == 'FULL_DISCOUNT'"><input type="radio" :name="item.skuId" :value="indexj" v-model="activityRule.checked">满{{ activityRule.conditionNum}}件打{{ activityRule.benefitDiscount }}折</li>
-                                            </ul>
-                                            <div class="op-btns ac mt20">
-<!--                                                <a href="#none" class="btn-1 select-promotion" @click="activitySure()">确定</a>-->
-                                                <a href="#none" class="btn-9 ml10 del cancel-promotion" @click="close()">取消</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="clr"></div>
-                                </div>
-<!--                                <p class="mt5" style="border: 1px solid #f9d2d3;color: #E2231A;margin-top: 0px; margin-bottom: 3px;width: 110px;" v-if="item.skuActivityReduceAmount != null">-->
-<!--                                    <span class="pro-tiny-tip">促销优惠：¥{{ item.skuActivityReduceAmount }}</span>-->
-<!--                                </p>-->
-
-                                <div v-if="item.couponInfoList !== null && item.couponInfoList.length > 0">
-                                    <a class="sales-promotion" :id="'couponInfo_a_'+item.skuId" href="#none" @click="couponInfoShow(item.skuId)" style="color: #E2231A;">优惠券<b></b></a>
-                                    <div class="promotion-tips" :id="'couponInfo_'+item.skuId" style="left: 675px; top:100px; display: none;width:315px;'">
-                                        <div class="promotion-tit" style="width: 43px;">优惠券<b></b></div>
-                                        <div class="promotion-cont" style="width: auto;">
-
-                                            <div class="p-coupon-item p-coupon-item-gray" v-for="couponInfo in item.couponInfoList" :key="couponInfo.id">
-                                                <div class="coupon-price" style="border-color:#e74649;">
-                                                    <span class="txt" v-if="couponInfo.couponType == 'CASH'" style="color: #e74649;">{{ couponInfo.benefitAmount }}元</span>
-                                                    <span class="txt" v-if="couponInfo.couponType == 'DISCOUNT'" style="color: #e74649;">{{ couponInfo.benefitDiscount }}折</span>
-                                                    <span class="txt" v-if="couponInfo.couponType == 'FULL_REDUCTION'" style="color: #e74649;">{{ couponInfo.benefitAmount }}元</span>
-                                                    <span class="txt" v-if="couponInfo.couponType == 'FULL_DISCOUNT'" style="color: #e74649;">{{ couponInfo.benefitDiscount }}折</span>
-                                                </div>
-                                                <div class="coupon-msg">
-                                                    <div>
-                                                        <span class="ctype" v-if="couponInfo.couponType == 'CASH'">现金券</span>
-                                                        <span class="ctype" v-if="couponInfo.couponType == 'DISCOUNT'">折扣券</span>
-                                                        <span class="ctype" v-if="couponInfo.couponType == 'FULL_REDUCTION'">满减卷</span>
-                                                        <span class="ctype" v-if="couponInfo.couponType == 'FULL_DISCOUNT'">满件打折卷</span>
-
-                                                        <span class="cinfo" v-if="couponInfo.couponType == 'CASH'">现金券{{ couponInfo.benefitAmount }}元</span>
-                                                        <span class="cinfo" v-if="couponInfo.couponType == 'DISCOUNT'">折扣券{{ couponInfo.benefitDiscount }}折</span>
-                                                        <span class="cinfo" v-if="couponInfo.couponType == 'FULL_REDUCTION'">满{{ couponInfo.conditionAmount }}减{{ couponInfo.benefitAmount }}元</span>
-                                                        <span class="cinfo" v-if="couponInfo.couponType == 'FULL_DISCOUNT'">满{{ couponInfo.conditionNum }}件打{{ couponInfo.benefitDiscount }}折</span>
-
-                                                    </div>
-                                                    <div class="clearfix">
-                                                        <div class="ftx-03 J_cpitems">{{ couponInfo.rangeDesc }}</div>
-                                                        <i class="zyc-ico"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="coupon-opbtns">
-                                                    <span class="ftx-03" v-if="couponInfo.isGet > 0 && couponInfo.couponStatus == 'NOT_USED'">已领取</span>
-                                                    <span class="ftx-03" v-if="couponInfo.isGet > 0 && couponInfo.couponStatus == 'USED'">已使用</span>
-                                                    <span class="btn-1 coupon-btn hm-action-statistics" v-if="couponInfo.isGet == 0" @click="getCouponInfo(couponInfo.id)" :hm-action = "'{\'action_id\':\'get_coupon\', \'item_type\': \'couponId\', \'item\': '+couponInfo.id+'}'">领取</span>
-                                                </div>
-                                            </div>
-
-                                            <div class="op-btns ac mt20">
-                                                <a href="#none" class="btn-9 ml10 del cancel-promotion" @click="close()">取消</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="clr"></div>
-                                </div>
-
-                            </li>
-                            <li class="yui3-u-1-8">
-                                <a href="javascript:void(0)" class="increment mins hm-action-statistics" @click="down(item)" :hm-action = "'{\'action_id\':\'cart_down\', \'item_type\': \'skuId\', \'item\': '+item.skuId+'}'">-</a>
+                                <a href="javascript:void(0)" class="increment mins" @click="down(item)">-</a>
                                 <input :value="item.skuNum"  minnum="1" class="itxt" />
-                                <a href="javascript:void(0)" class="increment plus hm-action-statistics" @click="add(item)" :hm-action = "'{\'action_id\':\'cart_add\', \'item_type\': \'skuId\', \'item\': '+item.skuId+'}'">+</a>
+                                <a href="javascript:void(0)" class="increment plus" @click="add(item)">+</a>
                             </li>
-                            <li class="yui3-u-1-8"><span class="sum" >￥{{ item.skuPrice * item.skuNum }}</span></li>
+                            <li class="yui3-u-1-8"><span class="sum" >{{ item.skuPrice * item.skuNum }}</span></li>
                             <li class="yui3-u-1-8">
-                                <a class="hm-action-statistics" href="javascript:void(0)" @click="deleteCart(item.skuId)" :hm-action = "'{\'action_id\':\'cart_remove\', \'item_type\': \'skuId\', \'item\': '+item.skuId+'}'">删除</a><br />
+                                <a href="javascript:void(0)" @click="deleteCart(item.skuId)">删除</a><br />
                                 <a href="#none">移到收藏</a>
                             </li>
                         </ul>
@@ -154,11 +81,11 @@
             <div class="money-box">
                 <div class="chosed">已选择<span >{{count}}</span>件商品</div>
                 <div class="sumprice">
-                    <span><em>总价：</em><i class="summoney">￥{{total - activityReduceAmount}}</i></span><br/>
-                    <span><em>促销：￥{{activityReduceAmount}}</em><i></i></span>
+                    <span><em>总价（不含运费） ：</em><i class="summoney">{{total}}</i></span>
+                    <span><em>已节省：</em><i></i></span>
                 </div>
                 <div class="sumbtn">
-                    <a class="sum-btn" href="javascript:" @click="trade()" style="color: #fff;">结算</a>
+                    <a class="sum-btn" href="javascript:" @click="trade()">结算</a>
                 </div>
             </div>
         </div>
@@ -378,16 +305,14 @@
 </div>
 <!--页面底部END-->
 <script src="/js/api/cart.js"></script>
-<script src="/js/api/activity.js"></script>
 <script th:inline="javascript">
-    var items = new Vue({
+    var item = new Vue({
         el: '#itemArray',
 
         data: {
             data: {},
             count: 0,
-            total: 0,
-            activityReduceAmount: 0 // 促销金额
+            total: 0
         },
 
         created() {
@@ -397,11 +322,9 @@
         methods: {
             init() {
                 cart.cartList().then(response => {
+                    // debugger
                     this.data = response.data.data
 
-                    for(var i=0; i<this.data.length; i++) {
-                        this.data[i].id = i;
-                    }
                     this.compute()
                 })
             },
@@ -409,81 +332,15 @@
             // 计算
             compute() {
                 if(this.data == null) return
+                // debugger
                 this.count = 0
                 this.total = 0
-                this.activityReduceAmount = 0
-
                 for(var i=0; i<this.data.length; i++) {
-                    if(this.data[i].activityRuleList != null && this.data[i].activityRuleList.length > 0) {
-                        var activityTotalAmount = 0;
-                        var activityTotalNum = 0;
-                        for(j=0; j<this.data[i].cartInfoList.length; j++) {
-                            if (this.data[i].cartInfoList[j].isChecked == 1) {
-                                // 计算促销金额
-                                activityTotalAmount += this.data[i].cartInfoList[j].skuPrice * this.data[i].cartInfoList[j].skuNum;
-                                activityTotalNum += this.data[i].cartInfoList[j].skuNum
-                            }
-                        }
-                        this.total += activityTotalAmount
-                        this.count += this.data[i].cartInfoList.length
-
-                        this.data[i].activityContent = ''
-                        for(j=0; j<this.data[i].activityRuleList.length; j++) {
-                            //默认不选择
-                            this.data[i].activityRuleList[j].checked = -1
-                        }
-                        for(j=0; j<this.data[i].activityRuleList.length; j++) {
-                            if(this.data[i].activityRuleList[j].activityType == 'FULL_REDUCTION') {
-                                // 促销金额必须满足
-                                if(activityTotalAmount >= this.data[i].activityRuleList[j].conditionAmount) {
-                                    // 选中了促销单选按钮
-                                    var index = j;
-                                    if(this.data[i].activityRuleList[j].checked > -1) {
-                                        index = this.data[i].activityRuleList[j].checked;
-                                    }
-                                    var currentActivityReduceAmount = this.data[i].activityRuleList[index].benefitAmount
-                                    this.data[i].activityContent = '活动商品，满' + this.data[i].activityRuleList[j].conditionAmount + '元，已减：' + currentActivityReduceAmount + '元'
-                                    this.activityReduceAmount += currentActivityReduceAmount
-
-                                    this.data[i].activityRuleList[j].checked = index
-                                    break
-                                }
-                            } else {
-                                if(activityTotalNum >= this.data[i].activityRuleList[j].conditionNum) {
-                                    // 选中了促销单选按钮
-                                    var index = j;
-                                    // if(this.data[i].activityRuleList[j].checked > -1) {
-                                    // index = this.data[i].activityRuleList[j].checked;
-                                    // }
-                                    var currentActivityReduceAmount = activityTotalAmount - activityTotalAmount * this.data[i].activityRuleList[index].benefitDiscount/10;
-                                    currentActivityReduceAmount = Math.round(currentActivityReduceAmount*100)/100
-                                    this.data[i].activityContent = '活动商品，打' + this.data[i].activityRuleList[j].benefitDiscount + '折，已减：' + currentActivityReduceAmount + '元'
-                                    this.activityReduceAmount += currentActivityReduceAmount
-
-                                    this.data[i].activityRuleList[j].checked = index
-                                    break
-                                }
-                            }
-                        }
-                    } else {
-                        for(j=0; j<this.data[i].cartInfoList.length; j++) {
-                            if (this.data[i].cartInfoList[j].isChecked == 1) {
-                                // 计算促销金额
-                                this.total += this.data[i].cartInfoList[j].skuPrice * this.data[i].cartInfoList[j].skuNum;
-                                this.count += 1
-                            }
-                        }
+                    this.total += this.data[i].skuPrice * this.data[i].skuNum
+                    if (this.data[i].isChecked == 1) {
+                        this.count += 1
                     }
                 }
-            },
-
-            close() {
-                $(".promotion-tips").hide()
-            },
-
-            activitySure() {
-                this.compute()
-                this.close()
             },
 
             addToCart(skuId, skuNum=1) {
@@ -515,6 +372,7 @@
             },
 
             deleteCart(skuId) {
+                // debugger
                 cart.deleteCart(skuId).then(response => {
                     console.log('刪除成功')
                     this.init()
@@ -522,19 +380,17 @@
             },
 
             trade() {
-                //  debugger
+                debugger
                 if(!auth.isLogin()) {
-                    window.location.href = 'http://passport.gmall.com/login.html?originUrl='+window.location.href
+                    window.location.href = 'http://www.gmall.com/login.html?originUrl='+window.location.href
                     return
                 }
 
                 var isChecked = 0
                 for(var i=0; i<this.data.length; i++) {
-                    for(j=0; j<this.data[i].cartInfoList.length; j++) {
-                        if (this.data[i].cartInfoList[j].isChecked == 1) {
-                            isChecked = 1
-                            break
-                        }
+                    if (this.data[i].isChecked == 1) {
+                        isChecked = 1
+                        break
                     }
                 }
                 if(isChecked == 1) {
@@ -542,42 +398,11 @@
                 } else {
                     alert('请选择购买的商品')
                 }
-            },
-
-            getCouponInfo(couponId) {
-                activity.getCouponInfo(couponId).then(response => {
-                    this.data.forEach(cartInfoVo =>{
-                        if(cartInfoVo.cartInfoList != null) {
-                            cartInfoVo.cartInfoList.forEach(item => {
-                                if(item.couponInfoList != null) {
-                                    item.couponInfoList.forEach(couponInfo => {
-                                        if(couponId == couponInfo.id) {
-                                            // 已领取
-                                            couponInfo.isGet = 1
-                                            // 未使用
-                                            couponInfo.couponStatus = 'NOT_USED'
-                                        }
-                                    })
-                                }
-                            })
-                        }
-                    })
-                })
-            },
-
-            activityShow(skuId) {
-                var top = document.getElementById('activity_a_'+skuId).offsetTop+document.body.scrollTop;
-                $("#activity_"+skuId).css("top", top+20)
-                $("#activity_"+skuId).show()
-            },
-
-            couponInfoShow(skuId) {
-                var top = document.getElementById('couponInfo_a_'+skuId).offsetTop+document.body.scrollTop;
-                $("#couponInfo_"+skuId).css("top", top+20)
-                $("#couponInfo_"+skuId).show()
             }
         }
     })
 </script>
+
 </body>
+
 </html>

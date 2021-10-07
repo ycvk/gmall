@@ -64,6 +64,8 @@ public class AuthGlobalFilter implements GlobalFilter {
 
         //获取用户Id
         String userId = getUserId(request);
+        //获取用户临时Id
+        String userTempId = this.getUserTempId(request);
         if ("-1".equals(userId)) {
             return out(exchange.getResponse(), ResultCodeEnum.PERMISSION);
         }
@@ -97,14 +99,41 @@ public class AuthGlobalFilter implements GlobalFilter {
         }
 
         //将获取的用户Id放入请求头中
-        if (!StringUtils.isEmpty(userId)) {
-            request.mutate().header("userId", userId).build();
+        if (!StringUtils.isEmpty(userId) || !StringUtils.isEmpty(userTempId)) {
+            if (!StringUtils.isEmpty(userId)) {
+                //用户Id不为空
+                request.mutate().header("userId", userId).build();
+            }
+            if (!StringUtils.isEmpty(userTempId)) {
+                //临时用户Id不为空
+                request.mutate().header("userTempId", userTempId).build();
+            }
 
             return chain.filter(exchange.mutate().request(request).build());
         }
 
         //默认返回
         return chain.filter(exchange);
+    }
+
+    /**
+     * 获取临时用户Id
+     *
+     * @param request
+     * @return
+     */
+    private String getUserTempId(ServerHttpRequest request) {
+        String userTempId = "";
+        HttpCookie httpCookie = request.getCookies().getFirst("userTempId");
+        if (httpCookie != null) {
+            userTempId = httpCookie.getValue();
+        } else {
+            List<String> list = request.getHeaders().get("userTempId");
+            if (!CollectionUtils.isEmpty(list)) {
+                userTempId = list.get(0);
+            }
+        }
+        return userTempId;
     }
 
     private Mono<Void> out(ServerHttpResponse response, ResultCodeEnum resultCodeEnum) {
