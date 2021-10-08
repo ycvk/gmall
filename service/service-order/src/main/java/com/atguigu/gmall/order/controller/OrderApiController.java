@@ -7,11 +7,10 @@ import com.atguigu.gmall.model.cart.CartInfo;
 import com.atguigu.gmall.model.order.OrderDetail;
 import com.atguigu.gmall.model.order.OrderInfo;
 import com.atguigu.gmall.model.user.UserAddress;
+import com.atguigu.gmall.order.service.OrderService;
 import com.atguigu.gmall.user.client.UserFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -37,6 +36,9 @@ public class OrderApiController {
 
     @Autowired
     private CartFeignClient cartFeignClient;
+
+    @Autowired
+    private OrderService orderService;
 
     /**
      * 确认订单
@@ -77,5 +79,21 @@ public class OrderApiController {
         return Result.ok(result);
     }
 
+
+    /**
+     * 提交订单
+     *
+     * @param orderInfo
+     * @param request
+     * @return
+     */
+    @PostMapping("auth/submitOrder")
+    public Result submitOrder(@RequestBody OrderInfo orderInfo, HttpServletRequest request) {
+        //获取用户Id
+        String userId = AuthContextHolder.getUserId(request);
+        orderInfo.setUserId(Long.parseLong(userId));
+        Long orderId = orderService.saveOrderInfo(orderInfo);
+        return Result.ok(orderId);
+    }
 
 }
