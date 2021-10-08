@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -168,5 +169,19 @@ public class CartServiceImpl implements CartService {
             boundHashOps.delete(skuId.toString());
             redisTemplate.expire(userId, RedisConst.USER_CART_EXPIRE, TimeUnit.SECONDS);
         }
+    }
+
+    @Override
+    public List<CartInfo> getCartCheckedList(String userId) {
+        String cartKey = RedisConst.USER_KEY_PREFIX + userId + RedisConst.USER_CART_KEY_SUFFIX;
+        //获取购物车列表
+        List<CartInfo> cartInfoList = redisTemplate.opsForHash().values(cartKey);
+        ArrayList<CartInfo> cartInfos = new ArrayList<>();
+        //遍历选中的数据
+        cartInfoList.stream().filter(cartInfo -> cartInfo.getIsChecked() == 1).forEach(cartInfo -> {
+            cartInfo.setSkuPrice(productFeignClient.getSkuPrice(cartInfo.getSkuId()));
+            cartInfos.add(cartInfo);
+        });
+        return cartInfos;
     }
 }

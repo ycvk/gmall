@@ -50,4 +50,12 @@ public interface CartService {
      * @param userId
      */
     void deleteCart(Long skuId, String userId);
+
+    /**
+     * 根据userId获取选中购物车列表
+     *
+     * @param userId
+     * @return
+     */
+    List<CartInfo> getCartCheckedList(String userId);
 }
