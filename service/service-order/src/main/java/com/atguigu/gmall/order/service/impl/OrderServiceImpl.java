@@ -9,6 +9,7 @@ import com.atguigu.gmall.order.mapper.OrderDetailMapper;
 import com.atguigu.gmall.order.mapper.OrderInfoMapper;
 import com.atguigu.gmall.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderDetailMapper orderDetailMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -75,5 +79,33 @@ public class OrderServiceImpl implements OrderService {
             orderDetailMapper.insert(orderDetail);
         });
         return orderInfo.getId();
+    }
+
+    @Override
+    public String getTradeNo(String userId) {
+        // 定义key
+        String tradeNoKey = "user:" + userId + ":tradeCode";
+        // 定义一个流水号
+        String tradeNo = UUID.randomUUID().toString().replace("-", "");
+        redisTemplate.opsForValue().set(tradeNoKey, tradeNo);
+        return tradeNo;
+    }
+
+    @Override
+    public boolean checkTradeCode(String userId, String tradeCodeNo) {
+        // 定义key
+        String tradeNoKey = "user:" + userId + ":tradeCode";
+        //从缓存中获取流水号与页面的比较
+        String redisTradeNo = (String) redisTemplate.opsForValue().get(tradeNoKey);
+        return tradeCodeNo.equals(redisTradeNo);
+    }
+
+    @Override
+    public void deleteTradeNo(String userId) {
+        // 定义key
+        String tradeNoKey = "user:" + userId + ":tradeCode";
+        // 删除数据
+        redisTemplate.delete(tradeNoKey);
+
     }
 }
